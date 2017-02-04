@@ -2,8 +2,6 @@
 from optparse import OptionParser
 import sys
 import os 
-from pythonLatex import MyPyTex
-from pythonLatex import latexCompile
 import datetime
 today = datetime.date.today()
 
@@ -147,6 +145,8 @@ def makeTexDocument(option):
   if options.output=="text":
     print string
   else:
+    from pythonLatex import MyPyTex
+    from pythonLatex import latexCompile
     doc=MyPyTex.Document()
     doc.body=string
     doc.type='plain'#minimal,plain,picture
