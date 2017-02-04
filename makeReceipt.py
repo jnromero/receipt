@@ -4,6 +4,8 @@ import sys
 import os 
 from pythonLatex import MyPyTex
 from pythonLatex import latexCompile
+import datetime
+today = datetime.date.today()
 
 
 
@@ -33,12 +35,42 @@ parser.add_option(short,longer,dest=destination,default=default,help=info)
 short="-n"
 longer="--number"
 destination="number"
-default="24"
-info="total number of subjects on the receipt"
+default="2"
+info="total number of extra subject lines on the receipt"
 parser.add_option(short,longer,dest=destination,default=default,help=info)
 
+short="-i"
+longer="--investigator"
+destination="investigator"
+default="Julian Romero"
+info="principle investigator for the experiment"
+parser.add_option(short,longer,dest=destination,default=default,help=info)
+
+short="-e"
+longer="--experimentName"
+destination="experimentName"
+default="Default"
+info="name of the experiment"
+parser.add_option(short,longer,dest=destination,default=default,help=info)
+
+short="-d"
+longer="--date"
+destination="date"
+default=today.strftime('%m/%d/%Y')
+info="date for the experiment.  Default is today's date."
+parser.add_option(short,longer,dest=destination,default=default,help=info)
+
+short="-s"
+longer="--sessionNumber"
+destination="sessionNumber"
+default="1"
+info="Session number for the given date.  Default is 1."
+parser.add_option(short,longer,dest=destination,default=default,help=info)
 (options, args) = parser.parse_args()
 
+
+if options.sessionNumber!="1":
+  options.date+=" (%s)"%(options.sessionNumber)
 
 
 def loadFile(options):
@@ -49,6 +81,11 @@ def loadFile(options):
 
 
 def parseFile(options):
+
+  print options.investigator
+  print options.experimentName
+  print options.date
+
   fileString=loadFile(options)
   names=[]
   for k in fileString.split("\n"):
@@ -89,15 +126,18 @@ def parseFile(options):
       \\draw (4in,10in) -- (4in,BOTTOMHEREin);
       \\draw (7in,10in) -- (7in,BOTTOMHEREin);
 
-      \\node at (1.5in,10.75in) {{\\bf Investigator:} Julian Romero};
-      \\node at (4.5in,10.75in) {{\\bf Experiment:} Repeated Games};
-      \\node at (7in,10.75in) {{\\bf Date:} 11/07/2016 (2)};
-      \\node at (6.5in,.25in) {{\\bf Total Payment:} \$};
+      \\node at (1.5in,10.75in) {{\\bf Investigator:} INAMEHERE};
+      \\node at (4.5in,10.75in) {{\\bf Experiment:} ENAMEHERE};
+      \\node at (7in,10.75in) {{\\bf Date:} DHERE};
+      \\node at (6.5in,.25in) {{\\bf Total Payment:} \\$};
       NAMESHERE
 
   \\end{tikzpicture}
   """
 
+  string=string.replace("INAMEHERE",options.investigator)
+  string=string.replace("ENAMEHERE",options.experimentName)
+  string=string.replace("DHERE",options.date)
   string=string.replace("NAMESHERE",nameString)
   string=string.replace("BOTTOMHERE","%.02f"%(bottom))
   return string
